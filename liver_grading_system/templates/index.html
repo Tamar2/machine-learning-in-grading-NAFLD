@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatty Liver Grading System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .navbar {
+            background: linear-gradient(to right, var(--primary-color), #34495e) !important;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .navbar-brand i {
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--secondary-color), #2980b9);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 3px dashed var(--secondary-color);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+            margin: 2rem 0;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(241, 248, 255, 0.9);
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--secondary-color), #2980b9);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--accent-color), #c0392b);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .preview-container {
+            display: inline-block;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .preview-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .preview-image {
+            max-width: 250px;
+            max-height: 250px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-card {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .back-button {
+            margin-bottom: 1rem;
+        }
+        
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .chart-wrapper {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .statistics {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        
+        .delete-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+        
+        .history-item:hover .delete-button {
+            opacity: 1;
+        }
+        
+        .delete-button:hover {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .history-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-right: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .history-info {
+            flex-grow: 1;
+        }
+        
+        .history-info h5 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-info p {
+            margin-bottom: 0.3rem;
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .grade-1 { background-color: rgba(75, 192, 192, 0.2); color: #2c3e50; }
+        .grade-2 { background-color: rgba(54, 162, 235, 0.2); color: #2c3e50; }
+        .grade-3 { background-color: rgba(255, 206, 86, 0.2); color: #2c3e50; }
+        .grade-4 { background-color: rgba(255, 99, 132, 0.2); color: #2c3e50; }
+
+        .home-section {
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .home-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%23ffffff" fill-opacity="0.1" d="M50 0 L100 50 L50 100 L0 50 Z"/></svg>');
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .home-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .medical-icon {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .home-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .home-subtitle {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .cta-buttons {
+            margin-top: 3rem;
+        }
+
+        .cta-button {
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .cta-button i {
+            font-size: 1.2rem;
+        }
+
+        .cta-button-primary {
+            background: linear-gradient(to right, var(--secondary-color), #2980b9);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .cta-button-primary:hover {
+            background: linear-gradient(to right, var(--accent-color), #c0392b);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .cta-button-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .cta-button-secondary:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showSection('home')">
+                <i class="fas fa-hospital"></i>
+                Liver Grading System
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-white" href="#" onclick="showSection('home')">Home</a>
+                <a class="nav-link text-white" href="#" onclick="showSection('upload')">Upload</a>
+                <a class="nav-link text-white" href="#" onclick="showSection('results')">Results</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div class="section active" id="homeSection">
+        <div class="home-section">
+            <div class="main-container home-content">
+                <div class="text-center mb-5">
+                    <i class="fas fa-hospital medical-icon"></i>
+                    <h1 class="home-title">Liver Fatness Grading System</h1>
+                    <p class="home-subtitle">Advanced AI-powered analysis for liver health assessment</p>
+                </div>
+
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-microscope feature-icon"></i>
+                            <h3 class="feature-title">Precise Analysis</h3>
+                            <p class="feature-description">State-of-the-art AI technology for accurate liver fat grading</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-chart-line feature-icon"></i>
+                            <h3 class="feature-title">Detailed Reports</h3>
+                            <p class="feature-description">Comprehensive results with visual analytics and statistics</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <i class="fas fa-history feature-icon"></i>
+                            <h3 class="feature-title">History Tracking</h3>
+                            <p class="feature-description">Monitor progress and track changes over time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center cta-buttons">
+                    <button class="btn cta-button cta-button-primary" onclick="showSection('upload')">
+                        <i class="fas fa-upload"></i> Upload Images
+                    </button>
+                    <button class="btn cta-button cta-button-secondary" onclick="showSection('results')">
+                        <i class="fas fa-chart-bar"></i> View Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="section" id="uploadSection">
+        <div class="main-container">
+            <button class="btn btn-secondary back-button" onclick="showSection('home')">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="mb-0">Fatty Liver Analysis</h3>
+                            <p class="mb-0">Upload liver images for automated grading</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-area" id="dropZone">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <h4>Drag and drop your images here</h4>
+                                <p class="text-muted">or</p>
+                                <input type="file" id="fileInput" class="d-none" accept="image/*" multiple>
+                                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-file-medical"></i> Select Images
+                                </button>
+                                <div id="selectedFiles" class="mt-3"></div>
+                                <button id="processButton" class="btn btn-success mt-3" style="display: none;">
+                                    <i class="fas fa-cogs"></i> Process Images
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="section" id="resultsSection">
+        <div class="main-container">
+            <button class="btn btn-secondary back-button" onclick="showSection('home')">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="mb-0">Results History</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="historyList"></div>
+                            <div class="chart-container">
+                                <div class="chart-wrapper">
+                                    <h5 class="chart-title">Grade Distribution (Bar Chart)</h5>
+                                    <canvas id="gradeBarChart"></canvas>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <h5 class="chart-title">Grade Distribution (Pie Chart)</h5>
+                                    <canvas id="gradePieChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="statistics">
+                                <h5 class="chart-title">Statistics</h5>
+                                <div id="statisticsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let selectedImages = [];
+        let processedImages = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId + 'Section').classList.add('active');
+            
+            if (sectionId === 'results') {
+                updateHistoryDisplay();
+            }
+        }
+
+        function addFileToList(file) {
+            selectedImages.push(file);
+            
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'preview-container';
+            
+            const img = document.createElement('img');
+            img.className = 'preview-image';
+            
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-item mb-2';
+            fileInfo.innerHTML = `
+                <span class="badge bg-primary">
+                    ${file.name}
+                    <button class="btn-close btn-close-white ms-2" onclick="removeFile('${file.name}')"></button>
+                </span>
+            `;
+            
+            previewContainer.appendChild(img);
+            previewContainer.appendChild(fileInfo);
+            document.getElementById('selectedFiles').appendChild(previewContainer);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            document.getElementById('processButton').style.display = 'block';
+        }
+
+        function removeFile(filename) {
+            selectedImages = selectedImages.filter(file => file.name !== filename);
+            document.getElementById('selectedFiles').innerHTML = '';
+            selectedImages.forEach(file => addFileToList(file));
+            if (selectedImages.length === 0) {
+                document.getElementById('processButton').style.display = 'none';
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home');
+            
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    addFileToList(files[i]);
+                }
+            });
+
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropZone.style.borderColor = '#e74c3c';
+            });
+
+            dropZone.addEventListener('dragleave', function() {
+                dropZone.style.borderColor = '#3498db';
+            });
+
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropZone.style.borderColor = '#3498db';
+                const files = e.dataTransfer.files;
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].type.startsWith('image/')) {
+                        addFileToList(files[i]);
+                    }
+                }
+            });
+
+            document.getElementById('processButton').addEventListener('click', function() {
+                selectedImages.forEach(file => {
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                processedImages.push({
+                                    filename: file.name,
+                                    grade: data.grade,
+                                    timestamp: new Date().toISOString(),
+                                    imageUrl: e.target.result
+                                });
+                                showSection('results');
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while processing the image.');
+                    });
+                });
+
+                selectedImages = [];
+                document.getElementById('selectedFiles').innerHTML = '';
+                document.getElementById('processButton').style.display = 'none';
+            });
+        });
+
+        function updateHistoryDisplay() {
+            // Clear existing history
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            // Add each processed image to history
+            processedImages.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <button class="delete-button" onclick="deleteResult(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <img src="${item.imageUrl}" alt="${item.filename}" class="history-image">
+                    <div class="history-info">
+                        <h5>${item.filename}</h5>
+                        <p class="grade-badge grade-${item.grade}">Grade ${item.grade}</p>
+                        <p>${getGradeDescription(item.grade)}</p>
+                        <small class="text-muted">Processed: ${new Date(item.timestamp).toLocaleString()}</small>
+                    </div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+            
+            // Update charts and statistics
+            updateCharts();
+            updateStatistics();
+        }
+
+        function updateCharts() {
+            // Count grades
+            const gradeCounts = {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0
+            };
+            
+            processedImages.forEach(item => {
+                gradeCounts[item.grade]++;
+            });
+
+            const totalImages = processedImages.length;
+            const labels = ['Grade 1 (Mild)', 'Grade 2 (Moderate)', 'Grade 3 (Severe)', 'Grade 4 (Very Severe)'];
+            const data = [gradeCounts[1], gradeCounts[2], gradeCounts[3], gradeCounts[4]];
+            const backgroundColors = [
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(255, 99, 132, 0.6)'
+            ];
+            const borderColors = [
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 99, 132, 1)'
+            ];
+
+            // Update Bar Chart
+            const barCtx = document.getElementById('gradeBarChart').getContext('2d');
+            if (window.barChart) {
+                window.barChart.destroy();
+            }
+            window.barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Images',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update Pie Chart
+            const pieCtx = document.getElementById('gradePieChart').getContext('2d');
+            if (window.pieChart) {
+                window.pieChart.destroy();
+            }
+            window.pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function updateStatistics() {
+            const statisticsList = document.getElementById('statisticsList');
+            statisticsList.innerHTML = '';
+
+            const totalImages = processedImages.length;
+            if (totalImages === 0) return;
+
+            const gradeCounts = {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0
+            };
+            
+            // Calculate time-based statistics
+            const timestamps = processedImages.map(item => new Date(item.timestamp));
+            const sortedTimestamps = [...timestamps].sort((a, b) => a - b);
+            const timeDiff = sortedTimestamps[sortedTimestamps.length - 1] - sortedTimestamps[0];
+            const daysBetween = timeDiff / (1000 * 60 * 60 * 24);
+            
+            // Calculate grade trends
+            const recentGrades = processedImages
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 3)
+                .map(item => item.grade);
+            
+            const gradeTrend = recentGrades.length > 1 
+                ? recentGrades[0] > recentGrades[1] ? 'Increasing' 
+                : recentGrades[0] < recentGrades[1] ? 'Decreasing' 
+                : 'Stable'
+                : 'N/A';
+            
+            processedImages.forEach(item => {
+                gradeCounts[item.grade]++;
+            });
+
+            // Calculate average grade
+            const totalGrade = processedImages.reduce((sum, item) => sum + item.grade, 0);
+            const averageGrade = (totalGrade / totalImages).toFixed(2);
+
+            // Find most common grade
+            const mostCommonGrade = Object.entries(gradeCounts)
+                .reduce((a, b) => a[1] > b[1] ? a : b)[0];
+
+            // Calculate grade distribution
+            const gradeDistribution = Object.entries(gradeCounts)
+                .map(([grade, count]) => ({
+                    grade: parseInt(grade),
+                    percentage: ((count / totalImages) * 100).toFixed(1)
+                }))
+                .sort((a, b) => b.percentage - a.percentage);
+
+            const stats = [
+                { label: 'Total Images Processed', value: totalImages },
+                { label: 'Analysis Period', value: `${daysBetween.toFixed(1)} days` },
+                { label: 'Average Grade', value: averageGrade },
+                { label: 'Most Common Grade', value: `Grade ${mostCommonGrade} (${gradeCounts[mostCommonGrade]} cases)` },
+                { label: 'Recent Grade Trend', value: gradeTrend },
+                { label: 'Grade Distribution', value: gradeDistribution.map(g => `Grade ${g.grade}: ${g.percentage}%`).join(', ') },
+                { label: 'Mild Cases (Grade 1)', value: `${gradeCounts[1]} (${((gradeCounts[1] / totalImages) * 100).toFixed(1)}%)` },
+                { label: 'Moderate Cases (Grade 2)', value: `${gradeCounts[2]} (${((gradeCounts[2] / totalImages) * 100).toFixed(1)}%)` },
+                { label: 'Severe Cases (Grade 3)', value: `${gradeCounts[3]} (${((gradeCounts[3] / totalImages) * 100).toFixed(1)}%)` },
+                { label: 'Very Severe Cases (Grade 4)', value: `${gradeCounts[4]} (${((gradeCounts[4] / totalImages) * 100).toFixed(1)}%)` }
+            ];
+
+            // Add trend indicators
+            const trendIndicators = {
+                'Increasing': '🔴',
+                'Decreasing': '🟢',
+                'Stable': '🟡',
+                'N/A': '⚪'
+            };
+
+            stats.forEach(stat => {
+                const statItem = document.createElement('div');
+                statItem.className = 'stat-item';
+                
+                // Add trend indicator for grade trend
+                const trendIcon = stat.label === 'Recent Grade Trend' 
+                    ? trendIndicators[stat.value] 
+                    : '';
+                
+                statItem.innerHTML = `
+                    <span>${stat.label}</span>
+                    <span class="fw-bold">${trendIcon} ${stat.value}</span>
+                `;
+                statisticsList.appendChild(statItem);
+            });
+
+            // Add a summary section
+            const summarySection = document.createElement('div');
+            summarySection.className = 'summary-section mt-4 p-3 bg-light rounded';
+            summarySection.innerHTML = `
+                <h6 class="text-center mb-3">Summary Analysis</h6>
+                <p class="mb-2">${getSummaryAnalysis(gradeDistribution, averageGrade, gradeTrend)}</p>
+            `;
+            statisticsList.appendChild(summarySection);
+        }
+
+        function getSummaryAnalysis(gradeDistribution, averageGrade, trend) {
+            const primaryGrade = gradeDistribution[0];
+            const secondaryGrade = gradeDistribution[1];
+            
+            let summary = `The analysis shows that Grade ${primaryGrade.grade} cases are most prevalent (${primaryGrade.percentage}%), `;
+            
+            if (secondaryGrade) {
+                summary += `followed by Grade ${secondaryGrade.grade} cases (${secondaryGrade.percentage}%). `;
+            }
+            
+            summary += `The average grade across all cases is ${averageGrade}. `;
+            
+            if (trend !== 'N/A') {
+                summary += `Recent cases show a ${trend.toLowerCase()} trend in severity.`;
+            }
+            
+            return summary;
+        }
+
+        function getGradeDescription(grade) {
+            const descriptions = {
+                1: 'Mild fatty liver',
+                2: 'Moderate fatty liver',
+                3: 'Severe fatty liver',
+                4: 'Very severe fatty liver'
+            };
+            return descriptions[grade] || 'Unknown grade';
+        }
+
+        function deleteResult(index) {
+            if (confirm('Are you sure you want to delete this result?')) {
+                processedImages.splice(index, 1);
+                updateHistoryDisplay();
+            }
+        }
+    </script>
+</body>
+</html> 
