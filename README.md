@@ -13,22 +13,7 @@ A specialized web-based application for automated liver steatosis (fat) grading 
 - **Spatial Analysis**: Analyzes fat distribution relative to central veins (centrilobular vs periportal)
 - **Modern Web Interface**: Clean, responsive design with drag-and-drop file upload
 
-## Detection Targets
 
-### Primary Detection Classes
-1. **Central Vein** - Circular white polygon structures in liver lobules
-2. **Fat Bubbles** - Small white vacuoles (steatosis) indicating fat accumulation
-3. **Hepatocytes** - Liver cells (context detection)
-4. **Portal Triad** - Portal structures (context detection)
-
-### Grading Scale
-
-| Grade | Fat Bubbles | Description |
-|-------|-------------|-------------|
-| 1 | 0-10 | Minimal steatosis - Normal liver appearance |
-| 2 | 10-25 | Mild steatosis - Slight fatty infiltration |
-| 3 | 25-50 | Moderate steatosis - Noticeable fatty changes |
-| 4 | 50+ | Severe steatosis - Significant fatty liver disease |
 
 ## Project Structure
 
@@ -299,5 +284,6 @@ For issues or questions:
 
 **Note**: This application is specifically designed for liver histology analysis and requires H&E stained images for optimal performance. Medical diagnosis should always be performed by qualified healthcare professionals.
 ```
+
 
 
