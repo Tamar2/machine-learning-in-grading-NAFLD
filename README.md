@@ -1,6 +1,5 @@
-הנה התוכן המעודכן של README.md שמתמקד ב-ResNet101 במקום YOLO:
 
-```markdown:README.md
+
 # Liver Fat Grading System
 
 A specialized web-based application for automated liver steatosis (fat) grading using ResNet101. The system analyzes liver histology images and provides a grade from 1-4 based on fat bubble density around central veins.
@@ -300,4 +299,5 @@ For issues or questions:
 
 **Note**: This application is specifically designed for liver histology analysis and requires H&E stained images for optimal performance. Medical diagnosis should always be performed by qualified healthcare professionals.
 ```
+
 
